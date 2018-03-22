@@ -29,8 +29,10 @@ t1 = BashOperator(
     dag=dag)
 
 def my_hello_fn(ds, **kwargs):
-    print(ds)
-    print(kwargs['params']['name'])
+    with open(kwargs['params']['bashFName'], 'w') as wf:   # file gets created in ~/airflow/dags/airflowPractice/
+        wf.write("Task Running for Date: " + ds + "\n")    # wherever the dag python code is residing
+    print("Task Running for Date: " + ds)
+    return 0
 
 def my_two_cents(ds, **kwargs):
     print('Hello How are you: ' + kwargs['params']['cent'])
@@ -39,16 +41,16 @@ def my_two_cents(ds, **kwargs):
 t2 = PythonOperator(
     task_id='python_kd',
     python_callable=my_hello_fn,
-    params={'name':'Vish'},
+    params={'bashFName':'vish.sh'},
     provide_context=True,
     dag=dag)
 
-t3 = PythonOperator(
-    task_id='python_cent',
-    python_callable=my_two_cents,
-    params={'cent':'50'},
-    provide_context=True,
-    dag=dag)
+#t3 = PythonOperator(
+#    task_id='python_cent',
+#    python_callable=my_two_cents,
+#    params={'cent':'50'},
+#    provide_context=True,
+#    dag=dag)
 
 t2.set_upstream(t1)
-t3.set_upstream(t2)
+#t3.set_upstream(t2)
